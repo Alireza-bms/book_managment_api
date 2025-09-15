@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Library;
+namespace App\Http\Controllers\v1\Library;
 
-use App\Http\Controllers\Controller;
-use App\Models\Loan;
+use App\Http\Controllers\v1\Controller;
+use App\Models\Author;
 use Illuminate\Http\Request;
 
-class LoanController extends Controller
+class AuthorController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class LoanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Loan $loan)
+    public function show(Author $author)
     {
         //
     }
@@ -35,7 +35,7 @@ class LoanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Loan $loan)
+    public function update(Request $request, Author $author)
     {
         //
     }
@@ -43,7 +43,7 @@ class LoanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Loan $loan)
+    public function destroy(Author $author)
     {
         //
     }

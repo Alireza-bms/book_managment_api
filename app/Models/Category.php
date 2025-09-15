@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory;
+
+    protected $fillable = ['name','description'];
+
+    // one-to-many → Category ↔ Books
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
 }

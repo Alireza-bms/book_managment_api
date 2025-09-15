@@ -7,6 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    /** @use HasFactory<\Database\Factories\BookFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'category_id',
+        'isbn',
+        'published_year',
+        'total_copies',
+        'available_copies'
+    ];
+
+    // many-to-many → Book ↔ Author
+    public function authors()
+    {
+        return $this->belongsToMany(Author::class)
+            ->withTimestamps();
+    }
+
+    // one-to-many → Book ↔ Loan
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    // many-to-one → Book ↔ Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
+

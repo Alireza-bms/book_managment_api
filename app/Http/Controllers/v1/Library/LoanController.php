@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Library;
+namespace App\Http\Controllers\v1\Library;
 
-use App\Http\Controllers\Controller;
-use App\Models\Book;
+use App\Http\Controllers\v1\Controller;
+use App\Models\Loan;
 use Illuminate\Http\Request;
 
-class BookController extends Controller
+class LoanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show(Loan $loan)
     {
         //
     }
@@ -35,7 +35,7 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Book $book)
+    public function update(Request $request, Loan $loan)
     {
         //
     }
@@ -43,7 +43,7 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy(Loan $loan)
     {
         //
     }

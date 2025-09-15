@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Controllers\v1\Admin;
+
+use App\Http\Controllers\v1\Controller;
+use App\Http\Requests\Admin\StorePermissionRequest;
+use App\Http\Requests\Admin\UpdatePermissionRequest;
+use App\Models\Permission;
+
+class PermissionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StorePermissionRequest $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Permission $permission)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdatePermissionRequest $request, Permission $permission)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Permission $permission)
+    {
+        //
+    }
+}
