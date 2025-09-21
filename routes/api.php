@@ -1,34 +1,99 @@
 <?php
 
 use App\Http\Controllers\v1\Auth\AuthController;
+use App\Http\Controllers\v1\User\ProfileController;
 use App\Http\Controllers\v1\Library\{AuthorController, BookController, CategoryController, LoanController};
-
+use App\Http\Controllers\v1\Admin\{UserController, RoleController, PermissionController};
 use Illuminate\Support\Facades\Route;
 
-// All endpoints are prefixed with /api/v1/
 Route::prefix('v1')->group(function () {
-    // Public endpoints for user authentication
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
 
-// Protected endpoints requiring authentication
+    // Authentication (public)
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+
+    // Protected routes (require auth:sanctum)
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
 
-        // Book CRUD operations
-        Route::apiResource('books', BookController::class);
+        // -------------------------
+        // User profile management
+        // -------------------------
+        Route::prefix('profile')->group(function () {
+            Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
+            Route::put('/', [ProfileController::class, 'update'])->name('profile.update');
+            Route::put('/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+        });
 
-        // Author CRUD operations
-        Route::apiResource('authors', AuthorController::class);
+        // Authentication (protected)
+        Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-        // Category CRUD operations
-        Route::apiResource('categories', CategoryController::class);
+        // -------------------------
+        // Library domain
+        // -------------------------
 
-        // Loan operations (create and return)
-        Route::apiResource('loans', LoanController::class)->only(['store', 'update']);
+        // Books: CRUD for managing library books
+        Route::apiResource('books', BookController::class)->names([
+            'index' => 'books.index',
+            'store' => 'books.store',
+            'show' => 'books.show',
+            'update' => 'books.update',
+            'destroy' => 'books.destroy',
+        ]);
+
+        // Authors: CRUD for managing authors
+        Route::apiResource('authors', AuthorController::class)->names([
+            'index' => 'authors.index',
+            'store' => 'authors.store',
+            'show' => 'authors.show',
+            'update' => 'authors.update',
+            'destroy' => 'authors.destroy',
+        ]);
+
+        // Categories: CRUD for managing book categories
+        Route::apiResource('categories', CategoryController::class)->names([
+            'index' => 'categories.index',
+            'store' => 'categories.store',
+            'show' => 'categories.show',
+            'update' => 'categories.update',
+            'destroy' => 'categories.destroy',
+        ]);
+
+        // Loans: store = borrow, update = return
+        Route::apiResource('loans', LoanController::class)->only(['store', 'update'])->names([
+            'store' => 'loans.store',
+            'update' => 'loans.update',
+        ]);
+
+        // -------------------------
+        // Admin domain
+        // -------------------------
+        Route::prefix('admin')->middleware('can:access-admin-panel')->group(function () {
+            // Users management (Admin only)
+            Route::apiResource('users', UserController::class)->names([
+                'index' => 'admin.users.index',
+                'store' => 'admin.users.store',
+                'show' => 'admin.users.show',
+                'update' => 'admin.users.update',
+                'destroy' => 'admin.users.destroy',
+            ]);
+
+            // Roles management
+            Route::apiResource('roles', RoleController::class)->names([
+                'index' => 'admin.roles.index',
+                'store' => 'admin.roles.store',
+                'show' => 'admin.roles.show',
+                'update' => 'admin.roles.update',
+                'destroy' => 'admin.roles.destroy',
+            ]);
+
+            // Permissions management
+            Route::apiResource('permissions', PermissionController::class)->names([
+                'index' => 'admin.permissions.index',
+                'store' => 'admin.permissions.store',
+                'show' => 'admin.permissions.show',
+                'update' => 'admin.permissions.update',
+                'destroy' => 'admin.permissions.destroy',
+            ]);
+        });
     });
-
 });
-
-
-

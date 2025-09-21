@@ -3,48 +3,82 @@
 namespace App\Http\Controllers\v1\Library;
 
 use App\Http\Controllers\v1\Controller;
+use App\Http\Requests\Library\CategoryStoreRequest;
+use App\Http\Requests\Library\CategoryUpdateRequest;
+use App\Http\Resources\Library\CategoryCollection;
+use App\Http\Resources\Library\CategoryResource;
 use App\Models\Category;
+use App\Services\Library\CategoryService;
+use App\Traits\FilterRequestIncludes;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use FilterRequestIncludes;
+
+    // Service layer responsible for business logic
+    protected CategoryService $categoryService;
+
+    // Allowed relations to include
+    protected array $allowedIncludes = ['books'];
+
+    public function __construct(CategoryService $categoryService)
     {
-        //
+        $this->categoryService = $categoryService;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display a paginated list of categories.
+     *
+     * Supports optional eager loading of relations via ?include=books
+     * and applies default ordering by created_at (descending).
      */
-    public function store(Request $request)
+    public function index(Request $request): CategoryCollection
     {
-        //
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        $categories = $this->categoryService->list(10, $includes);
+
+        return new CategoryCollection($categories);
     }
 
     /**
-     * Display the specified resource.
+     * Display a single category with optional includes.
      */
-    public function show(Category $category)
+    public function show(Request $request, Category $category): CategoryResource
     {
-        //
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        $category = $this->categoryService->show($category, $includes);
+
+        return new CategoryResource($category);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Store a newly created category.
      */
-    public function update(Request $request, Category $category)
+    public function store(CategoryStoreRequest $request): CategoryResource
     {
-        //
+        $category = $this->categoryService->create($request->validated());
+        return new CategoryResource($category);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update an existing category.
      */
-    public function destroy(Category $category)
+    public function update(CategoryUpdateRequest $request, Category $category): CategoryResource
     {
-        //
+        $category = $this->categoryService->update($category, $request->validated());
+        return new CategoryResource($category);
+    }
+
+    /**
+     * Delete a category.
+     */
+    public function destroy(Category $category): Response
+    {
+        $this->categoryService->delete($category);
+        return response()->noContent();
     }
 }

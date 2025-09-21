@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->date('loaned_at');
             $table->date('due_at');
             $table->date('returned_at')->nullable();
+            $table->enum('status', ['active', 'returned', 'cancelled'])->default('active');
             $table->timestamps();
         });
     }
