@@ -17,15 +17,12 @@ class CategoryController extends Controller
 {
     use FilterRequestIncludes;
 
-    // Service layer responsible for business logic
-    protected CategoryService $categoryService;
 
     // Allowed relations to include
     protected array $allowedIncludes = ['books'];
 
-    public function __construct(CategoryService $categoryService)
+    public function __construct(protected CategoryService $categoryService)
     {
-        $this->categoryService = $categoryService;
     }
 
     /**

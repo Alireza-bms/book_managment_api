@@ -8,15 +8,20 @@ use Illuminate\Database\Seeder;
 class CategorySeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed categories using unique name.
      */
     public function run(): void
     {
-        $categories = include database_path('data/v1/categories.php');
+        $categories = [
+            ['name' => 'Science', 'description' => 'Science books'],
+            ['name' => 'Fiction', 'description' => 'Fiction books'],
+        ];
 
-
-        foreach ($categories as $category) {
-            Category::create($category);
+        foreach ($categories as $data) {
+            Category::updateOrCreate(
+                ['name' => $data['name']], // unique field
+                $data
+            );
         }
     }
 }

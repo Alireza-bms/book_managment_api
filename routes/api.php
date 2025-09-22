@@ -1,37 +1,41 @@
 <?php
 
+use App\Http\Controllers\v1\Admin\{PermissionController, RoleController, UserController};
 use App\Http\Controllers\v1\Auth\AuthController;
-use App\Http\Controllers\v1\User\ProfileController;
 use App\Http\Controllers\v1\Library\{AuthorController, BookController, CategoryController, LoanController};
-use App\Http\Controllers\v1\Admin\{UserController, RoleController, PermissionController};
+use App\Http\Controllers\v1\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
+    // -------------------------
     // Authentication (public)
-    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
-    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+    // -------------------------
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register'); // Register new user
+    Route::post('login', [AuthController::class, 'login'])->name('auth.login');           // Login user
 
+    // -------------------------
     // Protected routes (require auth:sanctum)
+    // -------------------------
     Route::middleware('auth:sanctum')->group(function () {
 
         // -------------------------
         // User profile management
         // -------------------------
         Route::prefix('profile')->group(function () {
-            Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
-            Route::put('/', [ProfileController::class, 'update'])->name('profile.update');
-            Route::put('/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+            Route::get('/', [ProfileController::class, 'show'])->name('profile.show');             // Show authenticated user profile
+            Route::put('/', [ProfileController::class, 'update'])->name('profile.update');         // Update profile info
+            Route::put('/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword'); // Update password
         });
 
-        // Authentication (protected)
+        // Logout
         Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 
         // -------------------------
         // Library domain
         // -------------------------
 
-        // Books: CRUD for managing library books
+        // Books CRUD
         Route::apiResource('books', BookController::class)->names([
             'index' => 'books.index',
             'store' => 'books.store',
@@ -40,7 +44,7 @@ Route::prefix('v1')->group(function () {
             'destroy' => 'books.destroy',
         ]);
 
-        // Authors: CRUD for managing authors
+        // Authors CRUD
         Route::apiResource('authors', AuthorController::class)->names([
             'index' => 'authors.index',
             'store' => 'authors.store',
@@ -49,7 +53,7 @@ Route::prefix('v1')->group(function () {
             'destroy' => 'authors.destroy',
         ]);
 
-        // Categories: CRUD for managing book categories
+        // Categories CRUD
         Route::apiResource('categories', CategoryController::class)->names([
             'index' => 'categories.index',
             'store' => 'categories.store',
@@ -58,17 +62,24 @@ Route::prefix('v1')->group(function () {
             'destroy' => 'categories.destroy',
         ]);
 
-        // Loans: store = borrow, update = return
+        // Loans: borrow (store), return (custom), cancel (custom)
         Route::apiResource('loans', LoanController::class)->only(['store', 'update'])->names([
             'store' => 'loans.store',
             'update' => 'loans.update',
         ]);
 
+        // Custom routes for loan actions
+        Route::prefix('loans')->group(function () {
+            Route::post('{loan}/return', [LoanController::class, 'return'])->name('loans.return'); // Return a borrowed book
+            Route::post('{loan}/cancel', [LoanController::class, 'cancel'])->name('loans.cancel'); // Cancel an active loan
+        });
+
         // -------------------------
-        // Admin domain
+        // Admin domain (requires access-admin-panel permission)
         // -------------------------
         Route::prefix('admin')->middleware('can:access-admin-panel')->group(function () {
-            // Users management (Admin only)
+
+            // Users management
             Route::apiResource('users', UserController::class)->names([
                 'index' => 'admin.users.index',
                 'store' => 'admin.users.store',

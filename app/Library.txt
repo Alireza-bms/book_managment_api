@@ -1,0 +1,373 @@
+===== File: AuthorController.php =====
+<?php
+
+namespace App\Http\Controllers\v1\Library;
+
+use App\Http\Controllers\v1\Controller;
+use App\Http\Requests\Library\AuthorStoreRequest;
+use App\Http\Requests\Library\AuthorUpdateRequest;
+use App\Http\Resources\Library\AuthorCollection;
+use App\Http\Resources\Library\AuthorResource;
+use App\Models\Author;
+use App\Services\Library\AuthorService;
+use App\Traits\FilterRequestIncludes;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class AuthorController extends Controller
+{
+    use FilterRequestIncludes;
+
+    // Service layer responsible for business logic
+    protected AuthorService $authorService;
+
+    // List of allowed relations that can be included from client request
+    protected array $allowedIncludes = ['books'];
+
+    public function __construct(AuthorService $authorService)
+    {
+        $this->authorService = $authorService;
+    }
+
+    /**
+     * Display a paginated list of authors.
+     *
+     * Supports optional eager loading of relations via ?include=books
+     * and applies default ordering by created_at (descending).
+     *
+     * @param Request $request Incoming HTTP request
+     * @return AuthorCollection Paginated collection of authors with optional includes
+     */
+    public function index(Request $request)
+    {
+        // Parse includes from the request using the reusable trait
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        // Fetch paginated authors from the service
+        $authors = $this->authorService->list(10, $includes);
+
+        // Return paginated authors wrapped in a Resource Collection
+        return new AuthorCollection($authors);
+    }
+
+    /**
+     * Display a single author.
+     *
+     * Optionally eager loads relations requested by client.
+     *
+     * @param Request $request Incoming HTTP request
+     * @param Author $author The author instance (from route-model binding)
+     * @return AuthorResource
+     */
+    public function show(Request $request, Author $author)
+    {
+        // Parse includes from the request
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        // Delegate to service to optionally load relations
+        $author = $this->authorService->show($author, $includes);
+
+        return new AuthorResource($author);
+    }
+
+    /**
+     * Store a newly created author.
+     *
+     * @param AuthorStoreRequest $request Validated author data
+     * @return AuthorResource
+     */
+    public function store(AuthorStoreRequest $request)
+    {
+        $author = $this->authorService->create($request->validated());
+        return new AuthorResource($author);
+    }
+
+    /**
+     * Update an existing author.
+     *
+     * @param AuthorUpdateRequest $request Validated update data
+     * @param Author $author The author to update
+     * @return AuthorResource
+     */
+    public function update(AuthorUpdateRequest $request, Author $author)
+    {
+        $author = $this->authorService->update($author, $request->validated());
+        return new AuthorResource($author);
+    }
+
+    /**
+     * Delete an author.
+     *
+     * @param Author $author The author to delete
+     * @return Response
+     */
+    public function destroy(Author $author)
+    {
+        $this->authorService->delete($author);
+        return response()->noContent();
+    }
+}
+
+----------------------------------------
+===== File: BookController.php =====
+<?php
+
+namespace App\Http\Controllers\v1\Library;
+
+use App\Http\Controllers\v1\Controller;
+use App\Http\Requests\Library\BookStoreRequest;
+use App\Http\Requests\Library\BookUpdateRequest;
+use App\Http\Resources\Library\BookCollection;
+use App\Http\Resources\Library\BookResource;
+use App\Models\Book;
+use App\Services\Library\BookService;
+use App\Traits\FilterRequestIncludes;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class BookController extends Controller
+{
+    use FilterRequestIncludes;
+
+    // Service layer responsible for business logic
+    protected BookService $bookService;
+
+    // List of allowed relations that can be included from client request
+    protected array $allowedIncludes = ['category', 'authors'];
+
+    public function __construct(BookService $bookService)
+    {
+        $this->bookService = $bookService;
+    }
+
+    /**
+     * Display a paginated list of books.
+     *
+     * Supports optional eager loading of relations via ?include=category,authors
+     * and applies default ordering by created_at (descending).
+     *
+     * @param Request $request Incoming HTTP request
+     * @return BookCollection Paginated collection of books with optional includes
+     */
+    public function index(Request $request)
+    {
+        // Parse includes from the request using the reusable trait
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        // Fetch paginated books from the service (includes + ordering handled inside service)
+        $books = $this->bookService->list(10, $includes);
+
+        // Return paginated books wrapped in a Resource Collection
+        return new BookCollection($books);
+    }
+
+    /**
+     * Display a single book.
+     *
+     * Optionally eager loads relations requested by client.
+     *
+     * @param Request $request Incoming HTTP request
+     * @param Book $book The book instance (from route-model binding)
+     * @return BookResource
+     */
+    public function show(Request $request, Book $book)
+    {
+        // Parse includes from the request
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        // Delegate to service to optionally load relations
+        $book = $this->bookService->show($book, $includes);
+
+        return new BookResource($book);
+    }
+
+    /**
+     * Store a newly created book.
+     *
+     * @param BookStoreRequest $request Validated book data
+     * @return BookResource
+     */
+    public function store(BookStoreRequest $request)
+    {
+        $book = $this->bookService->create($request->validated());
+        return new BookResource($book);
+    }
+
+    /**
+     * Update an existing book.
+     *
+     * @param BookUpdateRequest $request Validated update data
+     * @param Book $book The book to update
+     * @return BookResource
+     */
+    public function update(BookUpdateRequest $request, Book $book)
+    {
+        $book = $this->bookService->update($book, $request->validated());
+        return new BookResource($book);
+    }
+
+    /**
+     * Delete a book.
+     *
+     * @param Book $book The book to delete
+     * @return Response
+     */
+    public function destroy(Book $book)
+    {
+        $this->bookService->delete($book);
+        return response()->noContent();
+    }
+}
+
+----------------------------------------
+===== File: CategoryController.php =====
+<?php
+
+namespace App\Http\Controllers\v1\Library;
+
+use App\Http\Controllers\v1\Controller;
+use App\Http\Requests\Library\CategoryStoreRequest;
+use App\Http\Requests\Library\CategoryUpdateRequest;
+use App\Http\Resources\Library\CategoryCollection;
+use App\Http\Resources\Library\CategoryResource;
+use App\Models\Category;
+use App\Services\Library\CategoryService;
+use App\Traits\FilterRequestIncludes;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class CategoryController extends Controller
+{
+    use FilterRequestIncludes;
+
+    // Service layer responsible for business logic
+    protected CategoryService $categoryService;
+
+    // Allowed relations to include
+    protected array $allowedIncludes = ['books'];
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
+    /**
+     * Display a paginated list of categories.
+     *
+     * Supports optional eager loading of relations via ?include=books
+     * and applies default ordering by created_at (descending).
+     */
+    public function index(Request $request): CategoryCollection
+    {
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        $categories = $this->categoryService->list(10, $includes);
+
+        return new CategoryCollection($categories);
+    }
+
+    /**
+     * Display a single category with optional includes.
+     */
+    public function show(Request $request, Category $category): CategoryResource
+    {
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+
+        $category = $this->categoryService->show($category, $includes);
+
+        return new CategoryResource($category);
+    }
+
+    /**
+     * Store a newly created category.
+     */
+    public function store(CategoryStoreRequest $request): CategoryResource
+    {
+        $category = $this->categoryService->create($request->validated());
+        return new CategoryResource($category);
+    }
+
+    /**
+     * Update an existing category.
+     */
+    public function update(CategoryUpdateRequest $request, Category $category): CategoryResource
+    {
+        $category = $this->categoryService->update($category, $request->validated());
+        return new CategoryResource($category);
+    }
+
+    /**
+     * Delete a category.
+     */
+    public function destroy(Category $category): Response
+    {
+        $this->categoryService->delete($category);
+        return response()->noContent();
+    }
+}
+
+----------------------------------------
+===== File: LoanController.php =====
+<?php
+
+namespace App\Http\Controllers\v1\Library;
+
+use App\Http\Controllers\v1\Controller;
+use App\Http\Requests\Library\LoanStoreRequest;
+use App\Http\Resources\Library\LoanCollection;
+use App\Http\Resources\Library\LoanResource;
+use App\Models\Loan;
+use App\Services\Library\LoanService;
+use App\Traits\FilterRequestIncludes;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class LoanController extends Controller
+{
+    use FilterRequestIncludes;
+
+    protected LoanService $loanService;
+
+    protected array $allowedIncludes = ['user', 'book'];
+
+    public function __construct(LoanService $loanService)
+    {
+        $this->loanService = $loanService;
+    }
+
+    public function index(Request $request)
+    {
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+        $loans = $this->loanService->list(10, $includes);
+
+        return new LoanCollection($loans);
+    }
+
+    public function show(Request $request, Loan $loan)
+    {
+        $includes = $this->filterIncludes($request, $this->allowedIncludes);
+        $loan = $this->loanService->show($loan, $includes);
+
+        return new LoanResource($loan);
+    }
+
+    public function store(LoanStoreRequest $request)
+    {
+        $loan = $this->loanService->create($request->validated());
+        return new LoanResource($loan);
+    }
+
+    public function return(Loan $loan)
+    {
+        $loan = $this->loanService->return($loan);
+        return new LoanResource($loan);
+    }
+
+    public function cancel(Loan $loan)
+    {
+        $loan = $this->loanService->cancel($loan);
+        return new LoanResource($loan);
+    }
+}
+
+----------------------------------------

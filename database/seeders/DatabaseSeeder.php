@@ -7,9 +7,8 @@ use Database\Seeders\v1\{
     BookSeeder,
     CategorySeeder,
     LoanSeeder,
-    PermissionSeeder,
-    RoleSeeder,
-    UserSeeder
+    UserSeeder,
+    RolePermissionSeeder
 };
 use Illuminate\Database\Seeder;
 
@@ -18,8 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RoleSeeder::class,
-            PermissionSeeder::class,
+            RolePermissionSeeder::class,
             UserSeeder::class,
             CategorySeeder::class,
             AuthorSeeder::class,

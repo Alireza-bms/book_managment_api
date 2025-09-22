@@ -14,7 +14,8 @@ class Loan extends Model
         'book_id',
         'loaned_at',
         'due_at',
-        'returned_at'
+        'returned_at',
+        'status'
     ];
 
     protected $casts = [

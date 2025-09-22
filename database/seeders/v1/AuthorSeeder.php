@@ -8,15 +8,20 @@ use Illuminate\Database\Seeder;
 class AuthorSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed authors using unique name.
      */
     public function run(): void
     {
-        $authors = include database_path('data/v1/authors.php');
+        $authors = [
+            ['name' => 'Isaac Asimov', 'bio' => 'Sci-fi writer'],
+            ['name' => 'J.K. Rowling', 'bio' => 'Fantasy writer'],
+        ];
 
-
-        foreach ($authors as $author) {
-            Author::create($author);
+        foreach ($authors as $data) {
+            Author::updateOrCreate(
+                ['name' => $data['name']], // unique field
+                $data
+            );
         }
     }
 }

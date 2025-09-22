@@ -2,42 +2,57 @@
 
 namespace Database\Seeders\v1;
 
-use App\Models\Book;        // مدل Book که جدول books رو نمایندگی می‌کنه
+use App\Models\Author;
+use App\Models\Book;
 use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed books using unique ISBN.
      */
     public function run(): void
     {
-        // Load book data from external PHP file
-        $books = include database_path('data/v1/books.php');
+        $books = [
+            [
+                'title' => 'Foundation',
+                'isbn' => '978-0-553-80371-0',
+                'description' => 'Classic sci-fi novel',
+                'category_name' => 'Science',
+                'authors' => ['Isaac Asimov'],
+                'total_copies' => 5,
+                'available_copies' => 5,
+                'published_year' => 1951,
+            ],
+            [
+                'title' => 'Harry Potter and the Philosopher\'s Stone',
+                'isbn' => '978-0-7475-3269-9',
+                'description' => 'Fantasy novel',
+                'category_name' => 'Fiction',
+                'authors' => ['J.K. Rowling'],
+                'total_copies' => 3,
+                'available_copies' => 3,
+                'published_year' => 1997,
+            ],
+        ];
 
-        foreach ($books as $bookData) {
-            // Extract authors IDs if exists, then remove from bookData
-            $authors = $bookData['authors'] ?? [];
-            unset($bookData['authors']); // authors نباید مستقیم تو جدول books ذخیره بشه
+        foreach ($books as $data) {
+            $category = Category::where('name', $data['category_name'])->first();
+            $book = Book::updateOrCreate(
+                ['isbn' => $data['isbn']], // unique field
+                [
+                    'title' => $data['title'],
+                    'description' => $data['description'],
+                    'category_id' => $category->id,
+                    'total_copies' => $data['total_copies'],
+                    'available_copies' => $data['available_copies'],
+                    'published_year' => $data['published_year'],
+                ]
+            );
 
-            // Merge with default values to ensure all necessary columns exist
-            $bookData = array_merge([
-                'title'            => null,
-                'isbn'             => null,
-                'published_year'   => null,
-                'category_id'      => null,
-                'total_copies'     => 1,
-                'available_copies' => 1,
-                'description'      => null
-            ], $bookData);
-
-            // Create a new Book record
-            $book = Book::create($bookData);
-
-            // Attach authors to the book via pivot table (many-to-many relationship)
-            if (!empty($authors)) {
-                $book->authors()->attach($authors);
-            }
+            // attach authors
+            $authorIds = Author::whereIn('name', $data['authors'])->pluck('id')->toArray();
+            $book->authors()->sync($authorIds);
         }
     }
 }

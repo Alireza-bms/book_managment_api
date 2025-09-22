@@ -8,21 +8,20 @@ use Illuminate\Database\Seeder;
 class UserSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed users using unique email instead of ID.
      */
     public function run(): void
     {
-        $users = include database_path('data/v1/users.php');
+        $usersData = [
+            ['name' => 'Admin User', 'email' => 'admin@example.com', 'password' => 'password'],
+            ['name' => 'John Doe', 'email' => 'john@example.com', 'password' => 'password'],
+        ];
 
-
-        foreach ($users as $userData) {
-            $roles = $userData['roles'] ?? [];
-            unset($userData['roles']);
-
-            $user = User::create($userData);
-            if (!empty($roles)) {
-                $user->roles()->attach($roles);
-            }
+        foreach ($usersData as $data) {
+            User::updateOrCreate(
+                ['email' => $data['email']], // unique field
+                ['name' => $data['name'], 'password' => $data['password']] // hashed automatically
+            );
         }
     }
 }

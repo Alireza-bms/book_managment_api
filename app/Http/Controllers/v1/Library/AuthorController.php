@@ -17,15 +17,11 @@ class AuthorController extends Controller
 {
     use FilterRequestIncludes;
 
-    // Service layer responsible for business logic
-    protected AuthorService $authorService;
-
     // List of allowed relations that can be included from client request
     protected array $allowedIncludes = ['books'];
 
-    public function __construct(AuthorService $authorService)
+    public function __construct(protected AuthorService $authorService)
     {
-        $this->authorService = $authorService;
     }
 
     /**

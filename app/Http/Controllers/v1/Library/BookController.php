@@ -17,15 +17,11 @@ class BookController extends Controller
 {
     use FilterRequestIncludes;
 
-    // Service layer responsible for business logic
-    protected BookService $bookService;
-
     // List of allowed relations that can be included from client request
     protected array $allowedIncludes = ['category', 'authors'];
 
-    public function __construct(BookService $bookService)
+    public function __construct(protected BookService $bookService)
     {
-        $this->bookService = $bookService;
     }
 
     /**
