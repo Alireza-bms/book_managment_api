@@ -18,7 +18,7 @@ class AuthService
     {
         // Create user (password is automatically hashed via $casts in User model)
         $user = User::create($data);
-
+        $user->syncRoles(['user']);
         // Create API token for the new user
         $token = $user->createToken('API Token')->plainTextToken;
 

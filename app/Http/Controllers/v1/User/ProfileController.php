@@ -8,6 +8,7 @@ use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Http\Resources\User\ProfileResource;
 use App\Services\User\ProfileService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -56,7 +57,7 @@ class ProfileController extends Controller
      * Update authenticated user's password.
      *
      * @param UpdatePasswordRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      *
      * @throws Exception If current password is invalid or update fails
      */
