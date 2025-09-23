@@ -62,14 +62,9 @@ Route::prefix('v1')->group(function () {
             'destroy' => 'categories.destroy',
         ]);
 
-        // Loans: borrow (store), return (custom), cancel (custom)
-        Route::apiResource('loans', LoanController::class)->only(['store', 'update'])->names([
-            'store' => 'loans.store',
-            'update' => 'loans.update',
-        ]);
-
-        // Custom routes for loan actions
+        // Loans: borrow, return, cancel
         Route::prefix('loans')->group(function () {
+            Route::post('/', [LoanController::class, 'store'])->name('loans.store'); // Borrow a book
             Route::post('{loan}/return', [LoanController::class, 'return'])->name('loans.return'); // Return a borrowed book
             Route::post('{loan}/cancel', [LoanController::class, 'cancel'])->name('loans.cancel'); // Cancel an active loan
         });
