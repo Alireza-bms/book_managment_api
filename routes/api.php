@@ -64,10 +64,13 @@ Route::prefix('v1')->group(function () {
 
         // Loans: borrow, return, cancel
         Route::prefix('loans')->group(function () {
+            Route::get('/', [LoanController::class, 'index'])->name('loans.index'); // List all loans
+            Route::get('{loan}', [LoanController::class, 'show'])->name('loans.show'); // Show specific loan
             Route::post('/', [LoanController::class, 'store'])->name('loans.store'); // Borrow a book
             Route::post('{loan}/return', [LoanController::class, 'return'])->name('loans.return'); // Return a borrowed book
             Route::post('{loan}/cancel', [LoanController::class, 'cancel'])->name('loans.cancel'); // Cancel an active loan
         });
+
 
         // -------------------------
         // Admin domain (requires access-admin-panel permission)

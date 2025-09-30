@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1\Auth;
 
 use App\Http\Controllers\v1\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\User\ProfileResource;
 use App\Services\Auth\AuthService;
@@ -53,11 +54,11 @@ class AuthController extends Controller
     /**
      * Logout user (current, all, or specific token)
      */
-    public function logout(Request $request)
+    public function logout(LogoutRequest $request)
     {
         $message = $this->authService->logout(
             $request->user(),
-            $request->input('type', 'current'),
+            $request->input('type'),
             $request->input('token_id')
         );
 

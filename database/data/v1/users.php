@@ -2,19 +2,19 @@
 return [
     [
         'name' => 'Alice Admin',
-        'email' => 'alice@example.test',
+        'email' => 'alice@gmail.com',
         'password' => 'password', // hashed automatically by model cast
         'roles' => ['admin'],     // roles by name
     ],
     [
         'name' => 'Liam Librarian',
-        'email' => 'liam@example.test',
+        'email' => 'liam@gmail.com',
         'password' => 'password',
         'roles' => ['librarian'],
     ],
     [
         'name' => 'User U',
-        'email' => 'user@example.test',
+        'email' => 'user@gmail.com',
         'password' => 'password',
         'roles' => ['user'],
     ],

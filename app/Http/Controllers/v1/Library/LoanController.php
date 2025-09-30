@@ -71,6 +71,7 @@ class LoanController extends Controller
      *
      * @param LoanStoreRequest $request
      * @return LoanResource
+     * @throws Throwable
      */
     public function store(LoanStoreRequest $request)
     {
@@ -84,6 +85,7 @@ class LoanController extends Controller
      *
      * @param Loan $loan
      * @return LoanResource
+     * @throws Throwable
      */
     public function return(Loan $loan)
     {

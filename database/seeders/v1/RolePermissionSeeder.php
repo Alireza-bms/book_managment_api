@@ -43,19 +43,24 @@ class RolePermissionSeeder extends Seeder
             'loans.store',    // register borrow
             'loans.update',   // register return
 
-            // Admin panel
+            // Admin panel access
+            'access-admin-panel',
+
+            // Admin: Users
             'admin.users.index',
             'admin.users.store',
             'admin.users.show',
             'admin.users.update',
             'admin.users.destroy',
 
+            // Admin: Roles
             'admin.roles.index',
             'admin.roles.store',
             'admin.roles.show',
             'admin.roles.update',
             'admin.roles.destroy',
 
+            // Admin: Permissions
             'admin.permissions.index',
             'admin.permissions.store',
             'admin.permissions.show',
@@ -78,7 +83,7 @@ class RolePermissionSeeder extends Seeder
         // 3. Assign Permissions to Roles
         // -----------------------
 
-        // Admin → full access
+        // Admin → full access (all permissions)
         $adminRole->syncPermissions($permissions);
 
         // Librarian → manage library & loans
@@ -86,7 +91,7 @@ class RolePermissionSeeder extends Seeder
             'books.index', 'books.show', 'books.store', 'books.update', 'books.destroy',
             'authors.index', 'authors.show', 'authors.store', 'authors.update', 'authors.destroy',
             'categories.index', 'categories.show', 'categories.store', 'categories.update', 'categories.destroy',
-            'loans.store', 'loans.update',  // handle borrowing/return
+            'loans.store', 'loans.update',
         ];
         $librarianRole->syncPermissions($librarianPermissions);
 

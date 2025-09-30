@@ -60,7 +60,7 @@ class AuthService
      * @param int|null $tokenId
      * @return string
      */
-    public function logout(User $user, string $type = 'current', ?int $tokenId = null): string
+    public function logout(User $user, string $type = null, ?int $tokenId = null): string
     {
         if ($type === 'all') {
             // Revoke all tokens

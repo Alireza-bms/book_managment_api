@@ -23,7 +23,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -37,11 +38,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/users",
+							"raw": "{{base_url}}/admin/users",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"admin",
 								"users"
 							]
 						},
@@ -60,26 +62,36 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
 						"url": {
-							"raw": "{{base_url}}/info?id=1",
+							"raw": "{{base_url}}/users/20",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"info"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1"
-								}
+								"users",
+								"20"
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -136,6 +148,11 @@
 				},
 				{
 					"name": "Delete user",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -155,13 +172,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/users/21",
+							"raw": "{{base_url}}/users/20",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"users",
-								"21"
+								"20"
 							]
 						}
 					},
@@ -209,216 +226,6 @@
 			]
 		},
 		{
-			"name": "Article resource",
-			"item": [
-				{
-					"name": "Get articles",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{base_url}}/articles",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get article",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/info?id=1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"info"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1"
-								}
-							]
-						},
-						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
-					"name": "Create article",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful POST request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-									"});",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"a\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users"
-							]
-						},
-						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
-					},
-					"response": []
-				},
-				{
-					"name": "Delete article",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/21",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"21"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update article (part)",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update article (all)",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						}
-					},
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"alireza\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"1"
-							]
-						},
-						"description": "## Update User Information\n\nThis endpoint allows clients to update the information of a specific user identified by their unique ID. The request is made using the HTTP PUT method to the URL `{{base_url}}/users/{id}` where `{id}` is the unique identifier of the user (in this case, `1`).\n\n### Request Body\n\nThe request must include a JSON object in the body with the following fields:\n\n- **name** (string): The name of the user. This field is required.\n    \n- **email** (string): The email address of the user. This field is required.\n    \n- **password** (string): The password for the user account. This field is required.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with a status code indicating the outcome of the operation. The response will typically include the updated user information or a confirmation message.\n\nEnsure that all fields are filled as they are mandatory for the request to be processed successfully.\n\nThis endpoint allows you to update the details of a specific user identified by their unique ID. The user ID is specified in the URL path.\n\n### Request\n\n- **Method**: PUT\n    \n- **URL**: `{{base_url}}/users/{id}`\n    \n\n#### Path Parameters\n\n- `id` (required): The unique identifier of the user you want to update.\n    \n\n#### Request Body\n\nThe request body must be sent in JSON format and can include the following fields:\n\n- `name` (string, optional): The name of the user.\n    \n- `email` (string, optional): The email address of the user.\n    \n- `age` (integer, optional): The age of the user.\n    \n- `address` (string, optional): The address of the user.\n    \n\n### Response\n\nUpon a successful update, the API will return a response with the following structure:\n\n- **Status Code**: 200 OK\n    \n- **Response Body**: The updated user object, which includes:\n    \n    - `id`: The unique identifier of the user.\n        \n    - `name`: The updated name of the user.\n        \n    - `email`: The updated email address of the user.\n        \n    - `age`: The updated age of the user.\n        \n    - `address`: The updated address of the user.\n        \n\n### Example Request\n\n``` http\nPUT {{base_url}}/users/1\nContent-Type: application/json\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"age\": 30,\n  \"address\": \"123 Main St, Anytown, USA\"\n}\n\n ```\n\n### Example Response\n\n``` json\n{\n  \"id\": 1,\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"age\": 30,\n  \"address\": \"123 Main St, Anytown, USA\"\n}\n\n ```\n\nThis endpoint is essential for maintaining user information and ensuring that the data is up-to-date."
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Auth",
 			"item": [
 				{
@@ -426,6 +233,31 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "alireza",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "alice@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
 							"raw": "{{base_url}}/register",
 							"host": [
@@ -454,12 +286,12 @@
 							"urlencoded": [
 								{
 									"key": "email",
-									"value": "mirza@gmail.com",
+									"value": "admin@example.com",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "12345678",
+									"value": "password",
 									"type": "text"
 								}
 							]
@@ -480,7 +312,16 @@
 					"name": "Logout",
 					"request": {
 						"method": "POST",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
 					},
 					"response": []
 				}
@@ -491,9 +332,30 @@
 			"item": [
 				{
 					"name": "Get profile",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [
+							{
+								"key": "Accept",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
 					},
 					"response": []
 				},
@@ -538,8 +400,18 @@
 				{
 					"name": "Update password",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/profile/password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile",
+								"password"
+							]
+						}
 					},
 					"response": []
 				}
@@ -563,7 +435,8 @@
 											"});"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -577,12 +450,23 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/users",
+									"raw": "{{base_url}}/books?include=category,authors",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users"
+										"books"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "include",
+											"value": "category,authors"
+										}
 									]
 								},
 								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -600,7 +484,8 @@
 											"    pm.response.to.have.status(200);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -608,18 +493,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/info?id=1",
+									"raw": "{{base_url}}/books/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"info"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "1"
-										}
+										"books",
+										"1"
 									]
 								},
 								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -662,12 +542,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users",
+									"raw": "{{base_url}}/books",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users"
+										"books"
 									]
 								},
 								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -695,13 +575,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/21",
+									"raw": "{{base_url}}/books/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
-										"21"
+										"books",
+										"1"
 									]
 								}
 							},
@@ -733,12 +613,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/1",
+									"raw": "{{base_url}}/books/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
+										"books",
 										"1"
 									]
 								},
@@ -763,7 +643,8 @@
 											"});"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -777,12 +658,18 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/users",
+									"raw": "{{base_url}}/authors?include=books",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users"
+										"authors"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "books"
+										}
 									]
 								},
 								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -800,7 +687,9 @@
 											"    pm.response.to.have.status(200);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -808,18 +697,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/info?id=1",
+									"raw": "{{base_url}}/authors/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"info"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "1"
-										}
+										"authors",
+										"1"
 									]
 								},
 								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -839,7 +723,8 @@
 											""
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -862,12 +747,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users",
+									"raw": "{{base_url}}/authors",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users"
+										"authors"
 									]
 								},
 								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -895,12 +780,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/21",
+									"raw": "{{base_url}}/authors/21",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
+										"authors",
 										"21"
 									]
 								}
@@ -933,12 +818,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/1",
+									"raw": "{{base_url}}/authors/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
+										"authors",
 										"1"
 									]
 								},
@@ -963,7 +848,8 @@
 											"});"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -977,12 +863,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/users",
+									"raw": "{{base_url}}/categories",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users"
+										"categories"
 									]
 								},
 								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -1000,7 +886,8 @@
 											"    pm.response.to.have.status(200);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1008,18 +895,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/info?id=1",
+									"raw": "{{base_url}}/categories/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"info"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "1"
-										}
+										"categories",
+										"1"
 									]
 								},
 								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -1095,13 +977,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/21",
+									"raw": "{{base_url}}/categories/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
-										"21"
+										"categories",
+										"1"
 									]
 								}
 							},
@@ -1133,16 +1015,154 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/1",
+									"raw": "{{base_url}}/categories/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
+										"categories",
 										"1"
 									]
 								},
 								"description": "## Update User Information\n\nThis endpoint allows clients to update the information of a specific user identified by their unique ID. The request is made using the HTTP PUT method to the URL `{{base_url}}/users/{id}` where `{id}` is the unique identifier of the user (in this case, `1`).\n\n### Request Body\n\nThe request must include a JSON object in the body with the following fields:\n\n- **name** (string): The name of the user. This field is required.\n    \n- **email** (string): The email address of the user. This field is required.\n    \n- **password** (string): The password for the user account. This field is required.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with a status code indicating the outcome of the operation. The response will typically include the updated user information or a confirmation message.\n\nEnsure that all fields are filled as they are mandatory for the request to be processed successfully.\n\nThis endpoint allows you to update the details of a specific user identified by their unique ID. The user ID is specified in the URL path.\n\n### Request\n\n- **Method**: PUT\n    \n- **URL**: `{{base_url}}/users/{id}`\n    \n\n#### Path Parameters\n\n- `id` (required): The unique identifier of the user you want to update.\n    \n\n#### Request Body\n\nThe request body must be sent in JSON format and can include the following fields:\n\n- `name` (string, optional): The name of the user.\n    \n- `email` (string, optional): The email address of the user.\n    \n- `age` (integer, optional): The age of the user.\n    \n- `address` (string, optional): The address of the user.\n    \n\n### Response\n\nUpon a successful update, the API will return a response with the following structure:\n\n- **Status Code**: 200 OK\n    \n- **Response Body**: The updated user object, which includes:\n    \n    - `id`: The unique identifier of the user.\n        \n    - `name`: The updated name of the user.\n        \n    - `email`: The updated email address of the user.\n        \n    - `age`: The updated age of the user.\n        \n    - `address`: The updated address of the user.\n        \n\n### Example Request\n\n``` http\nPUT {{base_url}}/users/1\nContent-Type: application/json\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"age\": 30,\n  \"address\": \"123 Main St, Anytown, USA\"\n}\n\n ```\n\n### Example Response\n\n``` json\n{\n  \"id\": 1,\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"age\": 30,\n  \"address\": \"123 Main St, Anytown, USA\"\n}\n\n ```\n\nThis endpoint is essential for maintaining user information and ensuring that the data is up-to-date."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Loan",
+					"item": [
+						{
+							"name": "Loan book",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "user_id",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "book_id",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "loaned_at",
+											"value": "2025-09-30",
+											"type": "text"
+										},
+										{
+											"key": "due_at",
+											"value": "2025-10-30",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/loans",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"loans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Return book",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "alireza",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "alireza@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123456",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "123456",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/loans/1/return",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"loans",
+										"1",
+										"return"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancel book",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{base_url}}/loans/1/cancel",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"loans",
+										"1",
+										"cancel"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get loans",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/loans",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"loans"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "book,user",
+											"disabled": true
+										}
+									]
+								}
 							},
 							"response": []
 						}
@@ -1152,8 +1172,11 @@
 		},
 		{
 			"name": "test",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Accept",
@@ -1167,33 +1190,52 @@
 						{
 							"key": "email",
 							"value": "mirza@gmail.com",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "password",
 							"value": "12345678",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
 				"url": {
-					"raw": "{{base_url}}/login",
+					"raw": "http://127.0.0.1:8000/storage/1",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "8000",
 					"path": [
-						"login"
+						"storage",
+						"1"
 					]
 				}
 			},
 			"response": []
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -1203,6 +1245,7 @@
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -1217,6 +1260,10 @@
 		{
 			"key": "base_url",
 			"value": "https://postman-rest-api-learner.glitch.me/"
+		},
+		{
+			"key": "token",
+			"value": ""
 		}
 	]
 }

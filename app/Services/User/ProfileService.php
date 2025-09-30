@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class ProfileService
 {
@@ -29,13 +30,16 @@ class ProfileService
      * @param string $newPassword
      * @return void
      *
-     * @throws Exception
+     * @throws ValidationException
      */
     public function updatePassword(User $user, string $currentPassword, string $newPassword): void
     {
-        if (! Hash::check($currentPassword, $user->password)) {
-            throw new Exception('Current password is incorrect');
+        if (!Hash::check($currentPassword, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['Current password is incorrect'],
+            ]);
         }
+
 
         $user->update(['password' => $newPassword]); // hashed via $casts
     }
