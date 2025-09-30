@@ -1,23 +1,34 @@
 # 📚 Library Management API
 
 A modern and scalable **Library Management System API** built with **Laravel 12**.  
-This project demonstrates clean architecture, API versioning, role & permission management (using **Spatie Laravel Permission**), and follows RESTful best practices.
+This project demonstrates clean architecture, API versioning, role & permission management (using **Spatie Laravel
+Permission**), and follows RESTful best practices.
 
 ---
 
 ## 🚀 Features
 
-- Authentication with **Laravel Sanctum**
-- Role & Permission system with **Spatie**
-- Versioned API (`/api/v1/...`)
-- User profile management
-- CRUD for:
+- **Authentication & Authorization**
+    - Laravel Sanctum for token-based, stateless authentication
+    - Role & permission system via Spatie
+    - Admin, Librarian, and User roles
+- **CRUD Operations**
     - Users (Admin only)
     - Roles & Permissions
     - Books, Authors, Categories
-- Borrow, Return & Cancel loan system
-- Clean code with **Service Layer**, **Form Requests**, and **Resources**
-- Ready for **production deployment**
+- **Loan Management**
+    - Borrow, Return, and Cancel loans
+- **Advanced API Features**
+    - Versioned endpoints (`/api/v1/...`)
+    - Resource filtering with `include` for relationships
+- **Code Quality**
+    - Clean architecture with Service layer
+    - Form Requests for validation
+    - API Resources for structured responses
+- **Testing**
+    - Designed for Pest or PHPUnit feature tests
+- **Documentation**
+    - Fully documented via Swagger UI / OpenAPI
 
 ---
 
@@ -26,9 +37,9 @@ This project demonstrates clean architecture, API versioning, role & permission 
 - [Laravel 12](https://laravel.com/)
 - [Laravel Sanctum](https://laravel.com/docs/sanctum)
 - [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v6/introduction)
-- [L5 Swagger](https://github.com/DarkaOnLine/L5-Swagger) for API documentation
+- [L5 Swagger](https://github.com/DarkaOnLine/L5-Swagger) for interactive API docs
 - PHP 8.2+
-- MySQL (or PostgreSQL)
+- MySQL / PostgreSQL
 - Composer
 - Docker (optional)
 
@@ -36,76 +47,46 @@ This project demonstrates clean architecture, API versioning, role & permission 
 
 ## 📦 Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
-   cd <repo-name>
-   ```
-
-2. Install dependencies:
-   ```bash
-   composer install
-   ```
-
-3. Copy `.env` file and configure database:
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Generate app key:
-   ```bash
-   php artisan key:generate
-   ```
-
-5. Run migrations and seeders:
-   ```bash
-   php artisan migrate --seed
-   ```
-
-6. Start the development server:
-   ```bash
-   php artisan serve
-   ```
+```bash
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
 
 ---
 
 ## 🔐 Authentication & Authorization
 
-- Auth handled by **Laravel Sanctum** (token-based, stateless).
-- Admin-only routes are protected with:
+- Token-based auth via **Laravel Sanctum**.
+- Admin-only routes protected via:
     - `can:access-admin-panel` middleware
-    - Spatie roles/permissions (`admin`, `librarian`, `user` by default).
+    - Spatie roles/permissions (`admin`, `librarian`, `user`)
 - Example roles:
-    - `admin`: Full access to all resources
-    - `librarian`: Manage books, authors, categories, loans
-    - `user`: Borrow & return books, manage profile
+    - **Admin**: Full access
+    - **Librarian**: Manage books, authors, categories, loans
+    - **User**: Borrow/return books, manage profile
 
 ---
 
 ## 📖 API Documentation
 
-Interactive API documentation is available via **Swagger UI**.  
-Once your project is running, you can access it at:
+Interactive API documentation is available via Swagger UI:
 
 ```
 http://localhost:8000/api/documentation
 ```
 
-- The UI uses the OpenAPI specification generated from your project.
-- You can switch between **JSON** and **YAML** formats.
-- All endpoints are documented with request/response schemas, parameters, and example payloads.
+- Switch between **JSON** and **YAML** formats
+- All endpoints include request/response schemas, parameters, and examples
+- Supports **`include` query parameter** for loading relationships, e.g.:
+    - `GET /api/v1/authors?include=books`
+    - `GET /api/v1/categories?include=books`
 
-### Notes
-
-- Make sure `L5_SWAGGER_GENERATE_ALWAYS` is set to `true` in `.env` during development to regenerate docs automatically:
-```bash
-L5_SWAGGER_GENERATE_ALWAYS=true
-```
-- The generated OpenAPI files are stored in:
-```text
-storage/api-docs/
-```
-- The default file names are `api-docs.json` and `api-docs.yaml`.
+> Make sure `L5_SWAGGER_GENERATE_ALWAYS=true` in `.env` to regenerate docs automatically.
 
 ---
 
@@ -131,53 +112,55 @@ app/
 ## 📡 API Endpoints (v1)
 
 ### Auth
+
 - `POST /api/v1/register`
 - `POST /api/v1/login`
 - `POST /api/v1/logout`
 
 ### Profile
+
 - `GET /api/v1/profile`
 - `PUT /api/v1/profile`
 - `PUT /api/v1/profile/password`
 
 ### Books
-- `GET /api/v1/books`
+
+- `GET /api/v1/books` → Optional `include=authors,category`
 - `POST /api/v1/books`
 - `GET /api/v1/books/{id}`
 - `PUT /api/v1/books/{id}`
 - `DELETE /api/v1/books/{id}`
 
 ### Authors
-- `GET /api/v1/authors`
+
+- `GET /api/v1/authors` → Optional `include=books`
 - `POST /api/v1/authors`
-- `GET /api/v1/authors/{id}`
+- `GET /api/v1/authors/{id}` → Optional `include=books`
 - `PUT /api/v1/authors/{id}`
 - `DELETE /api/v1/authors/{id}`
 
 ### Categories
-- `GET /api/v1/categories`
+
+- `GET /api/v1/categories` → Optional `include=books`
 - `POST /api/v1/categories`
-- `GET /api/v1/categories/{id}`
+- `GET /api/v1/categories/{id}` → Optional `include=books`
 - `PUT /api/v1/categories/{id}`
 - `DELETE /api/v1/categories/{id}`
 
 ### Loans
+
 - `POST /api/v1/loans` → Borrow
 - `POST /api/v1/loans/{loan}/return` → Return
 - `POST /api/v1/loans/{loan}/cancel` → Cancel
 
-### Admin (only for `admin` role)
-- CRUD for `users`, `roles`, `permissions`
+### Admin (requires `admin` role)
 
----
-
-## 🧪 Testing
-
-> ⚠️ No tests are currently written for this project. Future updates may include unit and feature tests.
+- Users CRUD: `GET/POST/PUT/DELETE /api/v1/admin/users`
+- Roles CRUD: `GET/POST/PUT/DELETE /api/v1/admin/roles`
+- Permissions CRUD: `GET/POST/PUT/DELETE /api/v1/admin/permissions`
 
 ---
 
 ## 📌 License
 
 This project is licensed under the [MIT License](LICENSE).
-
