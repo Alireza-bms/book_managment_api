@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\v1\Admin;
 
 use App\Http\Controllers\v1\Controller;
+use App\Http\Resources\Acl\PermissionCollection;
 use App\Http\Requests\Admin\{StorePermissionRequest, UpdatePermissionRequest};
 use App\Services\Acl\PermissionService;
 use Illuminate\Http\JsonResponse;
@@ -18,12 +19,13 @@ class PermissionController extends Controller
     /**
      * Display a list of all permissions
      */
-    public function index(): JsonResponse
+    public function index(): PermissionCollection
     {
         // Check permission for listing permissions
         $this->authorize('admin.permissions.index');
 
-        return response()->json($this->permissionService->getAll());
+        $permissions = $this->permissionService->getAll();
+        return new PermissionCollection($permissions);
     }
 
     /**

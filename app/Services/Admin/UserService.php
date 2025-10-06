@@ -4,38 +4,76 @@ namespace App\Services\Admin;
 
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Services\Core\CacheService;
 
 /**
  * Service class for managing users in the admin panel.
  *
  * Handles CRUD operations, role assignment, and user retrieval.
+ * Supports caching for list and individual user queries.
  */
 class UserService
 {
+    protected CacheService $cache;
+
     /**
-     * Get paginated list of users with optional relations.
+     * Constructor.
      *
-     * @param int   $perPage  Number of results per page
+     * @param CacheService $cache Cache service for storing and retrieving cached data.
+     */
+    public function __construct(CacheService $cache)
+    {
+        $this->cache = $cache;
+    }
+
+    /**
+     * Get paginated list of users with optional eager-loaded relations.
+     * The result is cached with a TTL of 60 seconds.
+     *
+     * @param int $perPage Number of results per page
      * @param array $includes Relations to eager load (e.g., ['roles', 'loans'])
      *
      * @return LengthAwarePaginator
      */
     public function list(int $perPage = 10, array $includes = []): LengthAwarePaginator
     {
-        // Start query on User model ordered by creation date descending
-        $query = User::query()->orderByDesc('created_at');
+        $cacheKey = "users:list:perPage={$perPage}:includes=" . implode(',', $includes);
 
-        // Eager-load relations if provided
-        if (!empty($includes)) {
-            $query->with($includes);
-        }
+        return $this->cache->remember($cacheKey, 60, function () use ($perPage, $includes) {
+            $query = User::query();
+            if (!empty($includes)) {
+                $query = $query->with($includes);
+            }
+            return $query->paginate($perPage);
+        });
+    }
 
-        // Return paginated results
-        return $query->paginate($perPage);
+    /**
+     * Find a single user with optional eager-loaded relations.
+     * Cached with a TTL of 5 minutes.
+     *
+     * @param User $user User instance to load
+     * @param array $includes Optional relations to eager load
+     *
+     * @return User
+     */
+    public function find(User $user, array $includes = []): User
+    {
+        $cacheKey = "users:{$user->id}:includes=" . implode(',', $includes);
+
+        return $this->cache->remember($cacheKey, 300, function () use ($user, $includes) {
+            if (!empty($includes)) {
+                $user->load($includes);
+            } else {
+                $user->load('roles', 'permissions');
+            }
+            return $user;
+        });
     }
 
     /**
      * Create a new user with optional role assignment.
+     * Cache invalidation is handled in Observer.
      *
      * @param array $data User data including name, email, password, and roles
      *
@@ -43,14 +81,12 @@ class UserService
      */
     public function create(array $data): User
     {
-        // Create the user; password hashing handled by model casts
         $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => $data['password'],
         ]);
 
-        // Assign roles if provided
         if (!empty($data['roles'])) {
             $user->syncRoles($data['roles']);
         }
@@ -60,18 +96,17 @@ class UserService
 
     /**
      * Update an existing user and optionally sync roles.
+     * Cache invalidation is handled in Observer.
      *
-     * @param User  $user User instance to update
+     * @param User $user User instance to update
      * @param array $data Data to update including optional roles
      *
      * @return User
      */
     public function update(User $user, array $data): User
     {
-        // Update user fields
         $user->update($data);
 
-        // Sync roles if provided
         if (isset($data['roles'])) {
             $user->syncRoles($data['roles']);
         }
@@ -81,32 +116,12 @@ class UserService
 
     /**
      * Delete a user from the database.
+     * Cache invalidation is handled in Observer.
      *
      * @param User $user User instance to delete
      */
     public function delete(User $user): void
     {
         $user->delete();
-    }
-
-    /**
-     * Find a single user with optional eager-loaded relations.
-     *
-     * @param User  $user     User instance to load
-     * @param array $includes Optional relations to eager load
-     *
-     * @return User
-     */
-    public function find(User $user, array $includes = []): User
-    {
-        // Load requested relations if provided
-        if (!empty($includes)) {
-            $user->load($includes);
-        } else {
-            // Default relations to load
-            $user->load('roles', 'permissions');
-        }
-
-        return $user;
     }
 }

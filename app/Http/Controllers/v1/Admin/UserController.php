@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\v1\Admin;
 
 use App\Http\Controllers\v1\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Admin\{StoreUserRequest, UpdateUserRequest};
 use App\Http\Resources\Admin\UserResource;
 use App\Http\Resources\Admin\UserCollection;
@@ -15,6 +16,7 @@ use Illuminate\Http\Response;
  * Controller for managing users in the admin panel.
  *
  * Provides endpoints for CRUD operations on users, including role and permission management.
+ * Response caching is handled globally by Spatie\ResponseCache, so no manual caching is needed.
  */
 class UserController extends Controller
 {
@@ -30,22 +32,23 @@ class UserController extends Controller
     /**
      * Inject the UserService to handle business logic.
      */
-    public function __construct(protected UserService $service) {}
+    public function __construct(protected UserService $service)
+    {
+    }
 
     /**
-     * Display a paginated list of users.
+     * Display a paginated list of users with optional eager-loaded relations.
+     *
+     * Caching is automatically handled by Spatie ResponseCache middleware.
      *
      * @return UserCollection
      */
-    public function index()
+    public function index(): UserCollection
     {
-        // Authorize the current user to view the users list
         $this->authorize('admin.users.index');
 
-        // Filter requested relations to prevent loading unwanted data
         $includes = $this->filterIncludes(request(), $this->allowedIncludes);
 
-        // Get paginated users with optional eager-loaded relations
         $users = $this->service->list(10, $includes);
 
         return new UserCollection($users);
@@ -59,10 +62,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        // Authorize the current user to create a new user
         $this->authorize('admin.users.store');
 
-        // Delegate creation to the UserService
         $user = $this->service->create($request->validated());
 
         return new UserResource($user);
@@ -76,13 +77,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // Authorize the current user to view the requested user
         $this->authorize('admin.users.show');
 
-        // Filter requested relations
         $includes = $this->filterIncludes(request(), $this->allowedIncludes);
 
-        // Load user with requested relations
         $user = $this->service->find($user, $includes);
 
         return new UserResource($user);
@@ -97,10 +95,8 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        // Authorize the current user to update the requested user
         $this->authorize('admin.users.update');
 
-        // Delegate update to UserService
         $user = $this->service->update($user, $request->validated());
 
         return new UserResource($user);
@@ -114,13 +110,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Authorize the current user to delete the requested user
         $this->authorize('admin.users.destroy');
 
-        // Delegate deletion to UserService
         $this->service->delete($user);
 
-        // Return 204 No Content
         return response()->noContent();
     }
 }

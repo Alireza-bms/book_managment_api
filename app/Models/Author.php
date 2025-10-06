@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Author extends Model
 {
-    use HasFactory,softDeletes;
+    use HasFactory, softDeletes;
 
-    protected $fillable = ['name','bio'];
+    protected $fillable = ['name', 'bio'];
+
+    // Cache tags that should be flushed when this model is created, updated, or deleted
+    public static array $relatedCacheTags = ['categories', 'books', 'authors'];
 
     // many-to-many → Author ↔ Book
     public function books()

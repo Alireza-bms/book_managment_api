@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->date('returned_at')->nullable();
             $table->enum('status', ['active', 'returned', 'cancelled'])->default('active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

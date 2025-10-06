@@ -12,6 +12,10 @@ class Category extends Model
 
     protected $fillable = ['name','description'];
 
+    // Cache tags that should be flushed when this model is created, updated, or deleted
+    public static array $relatedCacheTags = ['categories', 'books','authors'];
+
+
     // one-to-many → Category ↔ Books
     public function books()
     {

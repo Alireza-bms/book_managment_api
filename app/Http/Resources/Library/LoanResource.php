@@ -3,9 +3,10 @@
 namespace App\Http\Resources\Library;
 
 use App\Http\Resources\Admin\UserResource;
+use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-
+/** @mixin Loan */
 class LoanResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -17,8 +18,8 @@ class LoanResource extends JsonResource
             'due_at'      => $this->due_at,
             'returned_at' => $this->returned_at,
 
-            'user' => new UserResource($this->whenLoaded('user')),
-            'book' => new BookResource($this->whenLoaded('book')),
+            'user' => BookResource::make($this->whenLoaded('user')),
+            'book' => BookResource::make($this->whenLoaded('book')),
         ];
     }
 }
