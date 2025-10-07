@@ -1,57 +1,56 @@
 # 📚 Library Management API
 
-A modern and scalable **Library Management System API** built with **Laravel 12**.
+A modern and scalable **Library Management System API** built with **Laravel 12**.  
 This project demonstrates clean architecture, API versioning, role & permission management (using **Spatie Laravel Permission**), and follows RESTful best practices.
 
 ---
 
 ## 🚀 Features
 
--   **Authentication & Authorization**
+- **Authentication & Authorization**
 
-    -   Laravel Sanctum for token-based, stateless authentication
-    -   Role & permission system via Spatie
-    -   Admin, Librarian, and User roles
+  - Laravel Sanctum for token-based, stateless authentication
+  - Role & permission system via Spatie
+  - Admin, Librarian, and User roles
 
--   **CRUD Operations**
+- **CRUD Operations**
 
-    -   Users (Admin only)
-    -   Roles & Permissions
-    -   Books, Authors, Categories
+  - Users (Admin only)
+  - Roles & Permissions
+  - Books, Authors, Categories
 
--   **Loan Management**
+- **Loan Management**
 
-    -   Borrow, Return, and Cancel loans
+  - Borrow, Return, and Cancel loans
 
--   **Advanced API Features**
+- **Advanced API Features**
 
-    -   Versioned endpoints (`/api/v1/...`)
-    -   Resource filtering with `include` for relationships
-    -   API-level response caching via **Spatie ResponseCache**
+  - Versioned endpoints (`/api/v1/...`)
+  - Relationship includes via query param `?include=`
+  - API-level response caching via **Spatie ResponseCache**
 
--   **Code Quality**
+- **Code Quality**
 
-    -   Clean architecture with Service layer
-    -   Form Requests for validation
-    -   API Resources for structured responses
+  - Clean architecture with Service layer
+  - Form Requests for validation
+  - API Resources for structured responses
 
--   **Documentation**
-
-    -   Fully documented via Swagger UI / OpenAPI
+- **Documentation**
+  - Fully documented via Swagger UI / OpenAPI
 
 ---
 
 ## 🛠 Tech Stack
 
--   [Laravel 12](https://laravel.com/)
--   [Laravel Sanctum](https://laravel.com/docs/sanctum)
--   [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v6/introduction)
--   [Spatie ResponseCache](https://spatie.be/docs/laravel-responsecache/v8/introduction) for caching API responses
--   Redis for caching
--   [L5 Swagger](https://github.com/DarkaOnLine/L5-Swagger) for interactive API docs
--   PHP 8.2+
--   MySQL / PostgreSQL
--   Composer
+- [Laravel 12](https://laravel.com/)
+- [Laravel Sanctum](https://laravel.com/docs/sanctum)
+- [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v6/introduction)
+- [Spatie ResponseCache](https://spatie.be/docs/laravel-responsecache/v8/introduction)
+- Redis for caching
+- [L5 Swagger](https://github.com/DarkaOnLine/L5-Swagger) for interactive API docs
+- PHP 8.2+
+- MySQL / PostgreSQL
+- Composer
 
 ---
 
@@ -71,52 +70,49 @@ php artisan serve
 
 ## 🔐 Authentication & Authorization
 
--   Token-based auth via **Laravel Sanctum**
--   Admin-only routes protected via:
+- Token-based auth via **Laravel Sanctum**
+- Admin-only routes protected via:
 
-    -   `can:access-admin-panel` middleware
-    -   Spatie roles/permissions (`admin`, `librarian`, `user`)
+  - `can:access-admin-panel` middleware
+  - Spatie roles/permissions (`admin`, `librarian`, `user`)
 
--   Example roles:
-
-    -   **Admin**: Full access
-    -   **Librarian**: Manage books, authors, categories, loans
-    -   **User**: Borrow/return books, manage profile
+- Example roles:
+  - **Admin** → Full access
+  - **Librarian** → Manage books, authors, categories, loans
+  - **User** → Borrow/return books, manage profile
 
 ---
 
 ## ⚡ Caching
 
--   **Redis** is used as the cache backend.
--   API responses are cached automatically using **Spatie ResponseCache**.
+- **Redis** used as the cache backend
+- Responses cached automatically with **Spatie ResponseCache**
+  - GET requests like `/api/v1/books` are cached
+  - Cache invalidated via model observers
 
-    -   GET requests for resources (like `/api/v1/books`) are cached by default.
-    -   Cache is automatically invalidated via model observers when data changes.
-
--   Redis connection is configurable in `.env` via:
-
-    ```env
-    CACHE_DRIVER=redis
-    ```
+```env
+CACHE_DRIVER=redis
+```
 
 ---
 
 ## 📖 API Documentation
 
-Interactive API documentation is available via Swagger UI:
+Available via Swagger UI:
 
 ```
 http://localhost:8000/api/documentation
 ```
 
--   Switch between **JSON** and **YAML** formats
--   All endpoints include request/response schemas, parameters, and examples
--   Supports **`include` query parameter** for loading relationships, e.g.:
+- Switch between JSON and YAML formats
+- Each endpoint includes schemas, params, examples
+- Supports **`include`** query for relationships:
 
-    -   `GET /api/v1/authors?include=books`
-    -   `GET /api/v1/categories?include=books`
+  - `GET /api/v1/authors?include=books,categories`
+  - `GET /api/v1/books?include=authors,category`
+  - `GET /api/v1/categories?include=books,authors`
 
-> Make sure `L5_SWAGGER_GENERATE_ALWAYS=true` in `.env` to regenerate docs automatically.
+> Make sure `L5_SWAGGER_GENERATE_ALWAYS=true` in `.env`.
 
 ---
 
@@ -141,56 +137,96 @@ app/
 
 ## 📡 API Endpoints (v1)
 
-### Auth
+### 🔐 Auth
 
--   `POST /api/v1/register`
--   `POST /api/v1/login`
--   `POST /api/v1/logout`
+- `POST /api/v1/register`
+- `POST /api/v1/login`
+- `POST /api/v1/logout`
 
-### Profile
+---
 
--   `GET /api/v1/profile`
--   `PUT /api/v1/profile`
--   `PUT /api/v1/profile/password`
+### 👤 Profile
 
-### Books
+- `GET /api/v1/profile`
+- `PUT /api/v1/profile`
+- `PUT /api/v1/profile/password`
 
--   `GET /api/v1/books` → Optional `include=authors,category`
--   `POST /api/v1/books`
--   `GET /api/v1/books/{id}`
--   `PUT /api/v1/books/{id}`
--   `DELETE /api/v1/books/{id}`
+---
 
-### Authors
+### 📘 Books
 
--   `GET /api/v1/authors` → Optional `include=books`
--   `POST /api/v1/authors`
--   `GET /api/v1/authors/{id}` → Optional `include=books`
--   `PUT /api/v1/authors/{id}`
--   `DELETE /api/v1/authors/{id}`
+- `GET /api/v1/books?include=authors,category`
+- `POST /api/v1/books`
+- `GET /api/v1/books/{id}?include=authors,category`
+- `PUT /api/v1/books/{id}`
+- `DELETE /api/v1/books/{id}`
 
-### Categories
+> Books can include both **authors** and **category** relationships in a single request.
 
--   `GET /api/v1/categories` → Optional `include=books`
--   `POST /api/v1/categories`
--   `GET /api/v1/categories/{id}` → Optional `include=books`
--   `PUT /api/v1/categories/{id}`
--   `DELETE /api/v1/categories/{id}`
+---
 
-### Loans
+### ✍️ Authors
 
--   `POST /api/v1/loans` → Borrow
--   `POST /api/v1/loans/{loan}/return` → Return
--   `POST /api/v1/loans/{loan}/cancel` → Cancel
+- `GET /api/v1/authors?include=books,categories`
+- `POST /api/v1/authors`
+- `GET /api/v1/authors/{id}?include=books,categories`
+- `PUT /api/v1/authors/{id}`
+- `DELETE /api/v1/authors/{id}`
 
-### Admin (requires `admin` role)
+> Authors can include both **books** and **categories** in responses.
 
--   Users CRUD: `GET/POST/PUT/DELETE /api/v1/admin/users`
--   Roles CRUD: `GET/POST/PUT/DELETE /api/v1/admin/roles`
--   Permissions CRUD: `GET/POST/PUT/DELETE /api/v1/admin/permissions`
+---
+
+### 🏷️ Categories
+
+- `GET /api/v1/categories?include=books,authors`
+- `POST /api/v1/categories`
+- `GET /api/v1/categories/{id}?include=books,authors`
+- `PUT /api/v1/categories/{id}`
+- `DELETE /api/v1/categories/{id}`
+
+> Categories can include both **books** and **authors** in responses.
+
+---
+
+### 📦 Loans
+
+- `POST /api/v1/loans` → Borrow a book
+- `POST /api/v1/loans/{loan}/return` → Return a book
+- `POST /api/v1/loans/{loan}/cancel` → Cancel a loan
+
+---
+
+### ⚙️ Admin (requires `admin` role)
+
+#### 👥 Users
+
+- `GET /api/v1/admin/users?include=roles,permissions,loans`
+- `POST /api/v1/admin/users`
+- `GET /api/v1/admin/users/{id}?include=roles,permissions,loans`
+- `PUT /api/v1/admin/users/{id}`
+- `DELETE /api/v1/admin/users/{id}`
+
+> Admin users can now **include roles, permissions, and loans** in the response.
+
+#### 🎭 Roles
+
+- `GET /api/v1/admin/roles`
+- `POST /api/v1/admin/roles`
+- `GET /api/v1/admin/roles/{id}`
+- `PUT /api/v1/admin/roles/{id}`
+- `DELETE /api/v1/admin/roles/{id}`
+
+#### 🛡️ Permissions
+
+- `GET /api/v1/admin/permissions`
+- `POST /api/v1/admin/permissions`
+- `GET /api/v1/admin/permissions/{id}`
+- `PUT /api/v1/admin/permissions/{id}`
+- `DELETE /api/v1/admin/permissions/{id}`
 
 ---
 
 ## 📌 License
 
-This project is licensed under the [MIT License](LICENSE).
+Licensed under the [MIT License](LICENSE).
